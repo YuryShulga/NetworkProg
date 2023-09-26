@@ -50,6 +50,18 @@ namespace ClassWork1
                 await Dispatcher.InvokeAsync(() => TextBox_Content.Text = content);
 
                 TextBlock_Result.Text = $"({(int)(response.StatusCode)}){response.StatusCode.ToString()}";
+
+                foreach (var item in response.Headers)
+                {
+                    
+                    StringBuilder sb = new();
+                    sb.Append($"\"{item.Key}\"  -  ");
+                    foreach (var value in item.Value)
+                    {
+                        sb.Append($"{value.ToString()}, ");
+                    }
+                    ListBox_Headers.Items.Add(sb.ToString());
+                }
             }
             catch (InvalidOperationException)
             {
@@ -62,7 +74,7 @@ namespace ClassWork1
 
         }
 
-        private void Button_SaveRequestContentToFile_Click(object sender, RoutedEventArgs e)
+        private async void Button_SaveRequestContentToFile_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog dialog = new();
             if (dialog.ShowDialog() == true)
@@ -71,7 +83,8 @@ namespace ClassWork1
                 {
                     using (StreamWriter writer = new StreamWriter(dialog.FileName))
                     {       
-                        writer.WriteLine(TextBox_Content.Text);   
+                        
+                        await writer.WriteLineAsync(TextBox_Content.Text);
                     }
                 }
                 catch (IOException ex)
