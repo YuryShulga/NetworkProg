@@ -6,27 +6,46 @@
         xmlns:local="clr-namespace:ClassWork1"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <StackPanel>
-        <WrapPanel>
+    <Window.Resources>
+        <Style x:Key="Style_Button_SaveRequestContentToFile" TargetType="Button">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=TextBox_Content, Path=Text}" Value="">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    
+    <DockPanel LastChildFill="True">
+        <WrapPanel DockPanel.Dock="Top">
             <TextBox x:Name="TextBox_Adress" Width="400" Height="40" HorizontalAlignment="Left" Margin="5"/>
             <Button x:Name="Button_Send" 
                     Content="Send to server" 
                     Margin="5"
                     Click="Button_Send_Click"/>
         </WrapPanel>
-        <DockPanel LastChildFill="True">
-            <WrapPanel DockPanel.Dock="Top">
-                <TextBlock x:Name="TextBlock_AnswerCode"
-                           Text="код ответа"
-                           HorizontalAlignment="Left"/>
-            </WrapPanel>
-            <TextBox x:Name="TextBox_Content"
-                     AcceptsReturn="True" 
-                     TextWrapping="Wrap" 
-                     VerticalScrollBarVisibility="Auto"
-                     HorizontalScrollBarVisibility="Auto"/>    
-        </DockPanel>
+        <WrapPanel DockPanel.Dock="Top" 
+                   HorizontalAlignment="Left">
+            <TextBlock x:Name="TextBlock_AnswerCode"
+               Text="Код ответа:"
+               Margin="5"/>
+            <TextBlock Name="TextBlock_Result"
+               Margin="5"/>
+        </WrapPanel>
+
+        <Button DockPanel.Dock="Bottom"
+                x:Name="Button_SaveRequestContentToFile"
+                Content="Сохранить содержимое страницы в файл"
+                Click="Button_SaveRequestContentToFile_Click"
+                Style="{StaticResource Style_Button_SaveRequestContentToFile}"/>
+        <TextBox x:Name="TextBox_Content"
+            VerticalScrollBarVisibility="Auto"
+                 HorizontalScrollBarVisibility="Auto"
+                 MaxHeight="300"
+                 TextWrapping="Wrap"
+                 Margin="5"/>
         
 
-    </StackPanel>
+
+    </DockPanel>
 </Window>

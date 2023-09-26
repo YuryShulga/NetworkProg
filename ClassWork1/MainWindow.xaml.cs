@@ -14,6 +14,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
+using System.IO;
+using System.Windows.Threading;
 
 namespace ClassWork1
 {
@@ -40,13 +43,44 @@ namespace ClassWork1
             //}
 
             using HttpClient client = new HttpClient();
-            using var response = await client.GetAsync(TextBox_Adress.Text);
-            //string content = await client.GetStringAsync(TextBox_Adress.Text);
-            //TextBox_Content.Text = content.bo
-            var content = await response.Content.ReadAsStringAsync();
-            TextBox_Content.Text = content;
-            TextBlock_AnswerCode.Text = response.StatusCode.ToString();
-            
+            try
+            {
+                using var response = await client.GetAsync(TextBox_Adress.Text);
+                var content = await response.Content.ReadAsStringAsync();
+                await Dispatcher.InvokeAsync(() => TextBox_Content.Text = content);
+
+                TextBlock_Result.Text = $"({(int)(response.StatusCode)}){response.StatusCode.ToString()}";
+            }
+            catch (InvalidOperationException)
+            {
+                MessageBox.Show("Неправильно введен запрос");
+            }
+            catch (HttpRequestException)
+            {
+                MessageBox.Show("Отсутствие соединения с интернетом.");
+            }
+
         }
+
+        private void Button_SaveRequestContentToFile_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog dialog = new();
+            if (dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    using (StreamWriter writer = new StreamWriter(dialog.FileName))
+                    {       
+                        writer.WriteLine(TextBox_Content.Text);   
+                    }
+                }
+                catch (IOException ex)
+                {
+                    MessageBox.Show("Произошла ошибка при сохранении файла: " + ex.Message);
+                }
+            }
+        }
+
+
     }
 }
